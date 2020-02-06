@@ -1,0 +1,43 @@
+service: escavador-parser
+
+provider:
+  name: google
+  stage: prod
+  region: us-central1
+  project: tribal-artifact-263821
+  credentials: /Users/jorge.haddad/.gcloud/serverless-framework-admin-263821.json
+
+plugins:
+  - serverless-google-cloudfunctions
+
+package:
+  exclude:
+    - node_modules/**
+    - venv/**
+    - package.json
+    - package-lock.json
+    - .serverless/**
+    - .idea/**
+    - escavador_parser_vars.json
+
+functions:
+  escavador-people-search:
+    memorySize: 256
+    timeout: 120s
+    runtime: python37
+    handler: search_people_on_escavador
+    serviceAccount: escavador-parser-agent@tribal-artifact-263821.iam.gserviceaccount.com
+    labels:
+      service: escavador-parser
+    events:
+      - event:
+          eventType: providers/cloud.pubsub/eventTypes/topic.publish
+          resource: projects/tribal-artifact-263821/topics/trigger_escavador_people_search
+    environment:
+      VARS_BUCKET: web-parser-vars
+      VARS_BLOB: escavador_parser_vars.json
+      PEOPLE: '[{"name":"Jorge Jafet da Cruz Haddad", "monitor_processes": 1}, {"name": "Jorge Jafet Haddad", "monitor_processes": 1}, {"name": "Ingrid Pintucci Sales da Cruz", "monitor_processes": 1}]'
+      TO_EMAILS: jorgejch@gmail.com
+      EMAIL_NOTIFY_PUBSUB_TOPIC: projects/tribal-artifact-263821/topics/send_email_notification
+      LOG_LEVEL: DEBUG
+

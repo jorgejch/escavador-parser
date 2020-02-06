@@ -1,0 +1,6 @@
+json2html
+requests
+google-cloud-storage
+google-cloud-error-reporting
+google-cloud-firestore
+google-cloud-pubsub
