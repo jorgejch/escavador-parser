@@ -127,11 +127,15 @@ def _notify_email(subject: str, body: str, pub_sub_client: pubsub.PublisherClien
         if to_emails is None:
             raise Exception("Missing TO_EMAILS env var.")
 
+        if pub_sub_topic is None:
+            raise Exception("Missing EMAIL_NOTIFY_PUBSUB_TOPIC env var.")
+
+
         data = json.dumps({
             'email': {
                 'message': body,
                 'to_emails': to_emails,
-                'subject': f"[EscavadorParser]{subject}"
+                'subject': f"[EscavadorParser] {subject}"
             }
         })
         if pub_sub_topic is None:
@@ -143,6 +147,22 @@ def _notify_email(subject: str, body: str, pub_sub_client: pubsub.PublisherClien
         _get_error_reporting_client().report_exception()
         return 1
     return 0
+
+
+def parse_people_profiles_in_escavador(event, context):
+    """
+    Go through people search records and process their profile. Store new profiles, and compare current obtained
+    profiles with persisted ones. Notify on change.
+
+    >>> import main
+    >>> main.parse_people_profiles_in_escavador({},{})
+    0
+
+    :param event:
+    :param context:
+    :return:
+    """
+
 
 
 def _get_person_search_event_email_body(existing_profile: dict = None, new_profile: dict = None) -> str:
