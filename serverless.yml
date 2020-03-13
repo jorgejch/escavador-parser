@@ -21,11 +21,11 @@ package:
     - escavador_parser_vars.json
 
 functions:
-  escavador-people-search:
+  process_profiles_escavador:
     memorySize: 256
     timeout: 120s
     runtime: python37
-    handler: search_people_on_escavador
+    handler: process_profiles_escavador
     serviceAccount: escavador-parser-agent@tribal-artifact-263821.iam.gserviceaccount.com
     labels:
       service: escavador-parser
@@ -36,7 +36,7 @@ functions:
     environment:
       VARS_BUCKET: web-parser-vars
       VARS_BLOB: escavador_parser_vars.json
-      PEOPLE: '[{"name":"Jorge Jafet da Cruz Haddad", "monitor_processes": 1}, {"name": "Jorge Jafet Haddad", "monitor_processes": 1}, {"name": "Ingrid Pintucci Sales da Cruz", "monitor_processes": 1}]'
+      PEOPLE: '[{"name":"Jorge Jafet da Cruz Haddad", "monitor_processes": 1}]'
       TO_EMAILS: jorgejch@gmail.com
       EMAIL_NOTIFY_PUBSUB_TOPIC: projects/tribal-artifact-263821/topics/send_email_notification
       LOG_LEVEL: DEBUG

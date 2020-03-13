@@ -1,5 +1,4 @@
 import json
-
 import requests
 
 
@@ -11,27 +10,12 @@ def get_token(username: str, password: str):
     :return: dict with token info.
     """
     url = "https://api.escavador.com/api/v1/request-token"
-    r = requests.post(url=url, data={
-        'username': username,
-        'password': password
-    })
-    return json.loads(r.text)
-
-
-def get_process(token: str, state: str, number: str):
-    """
-    Get process.
-
-    :param token: The Bearer Auth token.
-    :return:
-    """
-    url = "https://api.escavador.com/api/v1/oab/{state}/{number}/processos".format(state=state, number=number)
-
-    headers = {
-        'Authorization': 'Bearer {access_token}'.format(access_token=token),
-        'X-Requested-With': 'XMLHttpRequest'
-    }
-    r = requests.request('GET', url, headers=headers)
+    r = requests.post(
+        url=url,
+        data={
+            'username': username,
+            'password': password
+        })
     return json.loads(r.text)
 
 
@@ -51,9 +35,49 @@ def search_person(token: str, name: str) -> dict:
     }
 
     headers = {
-        'Authorization': 'Bearer {access_token}'.format(access_token=token),
+        'Authorization': f'Bearer {token}',
         'X-Requested-With': 'XMLHttpRequest'
     }
 
     response = requests.request('GET', url, headers=headers, params=params)
     return json.loads(response.text, encoding='utf-8')
+
+
+def get_person_profile(token: str, person_id: int):
+    """
+    Get a person's profile.
+
+    api/v1/pessoas/{pessoaId}
+
+    :param token: Bearer token.
+    :param person_id: Id of the person
+    :return: dict with person data.
+    """
+    url = f'https://api.escavador.com/api/v1/pessoas/{person_id}'
+
+    headers = {
+        'Authorization': f'Bearer {token}',
+        'X-Requested-With': 'XMLHttpRequest'
+    }
+
+    response = requests.request('GET', url, headers=headers)
+    return json.loads(response.text)
+
+
+def get_process_by_person(token: str, person_id: int):
+    """
+    Get a person's processes.
+
+    :param token: Bearer token.
+    :param person_id: Id of the person
+    :return: dict with person's process data.
+    """
+    url = f'https://api.escavador.com/api/v1/pessoas/{person_id}/processos/'
+
+    headers = {
+        'Authorization': f'Bearer {token}',
+        'X-Requested-With': 'XMLHttpRequest'
+    }
+
+    response = requests.request('GET', url, headers=headers)
+    return json.loads(response.text)
